@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Type System Fundamentals</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; line-height: 1.6; }
+    h1, h2, h3 { color: #3178c6; }
+    pre { background-color: #f5f5f5; padding: 10px; border-radius: 5px; overflow-x: auto; }
+    code { font-family: Consolas, monospace; }
+    .back-link { margin-top: 20px; display: inline-block; }
+  </style>
+</head>
+<body>
+  <h1>Type System Fundamentals</h1>
+
+  <h2>1. Primitive, Literal, Union & Intersection Types</h2>
+  <pre><code>
+// Primitive types
+let name: string = "John";
+let age: number = 30;
+let isActive: boolean = true;
+let nullValue: null = null;
+let undefinedValue: undefined = undefined;
+
+// Literal types
+let status: "active" | "inactive" = "active";
+let count: 1 | 2 | 3 = 2;
+
+// Union types
+let id: string | number;
+id = "abc123";  // Valid
+id = 456;       // Also valid
+
+// Intersection types
+type Person = { name: string; age: number };
+type Employee = { jobTitle: string; employeeId: number };
+type EmployedPerson = Person & Employee;
+
+const worker: EmployedPerson = {
+  name: "Alice",
+  age: 28,
+  jobTitle: "Developer",
+  employeeId: 12345
+};
+  </code></pre>
+
+  <h2>2. Type Aliases vs. Interfaces</h2>
+  <pre><code>
+// Type Alias
+type User = {
+  id: number;
+  name: string;
+  email?: string; // Optional property
+};
+
+// Interface
+interface Product {
+  id: number;
+  name: string;
+  price: number;
+}
+
+// Extending types
+type Admin = User & {
+  privileges: string[];
+};
+
+// Extending interfaces
+interface DiscountedProduct extends Product {
+  discountPercentage: number;
+}
+
+// Structural typing example
+interface Duck {
+  quack(): void;
+  swim(): void;
+}
+
+// This works even though Bird doesn't explicitly implement Duck
+class Bird {
+  quack() { console.log("Quack!"); }
+  swim() { console.log("Swimming..."); }
+  fly() { console.log("Flying..."); }
+}
+
+const duck: Duck = new Bird(); // Valid due to structural typing
+  </code></pre>
+
+  <h2>3. Enums & Const Enums</h2>
+  <pre><code>
+// Regular enum
+enum Direction {
+  Up,     // 0
+  Down,   // 1
+  Left,   // 2
+  Right   // 3
+}
+
+// Enum with custom values
+enum HttpStatus {
+  OK = 200,
+  Created = 201,
+  BadRequest = 400,
+  Unauthorized = 401,
+  NotFound = 404
+}
+
+// String enums
+enum MediaTypes {
+  JSON = "application/json",
+  XML = "application/xml",
+  Plain = "text/plain"
+}
+
+// Const enum (more efficient, inlined at compile time)
+const enum Colors {
+  Red = "#FF0000",
+  Green = "#00FF00",
+  Blue = "#0000FF"
+}
+const primaryColor = Colors.Red; // Compiles to: const primaryColor = "#FF0000"
+  </code></pre>
+
+  <h2>4. Type Assertions & Non-null Assertions</h2>
+  <pre><code>
+// Type assertion (as keyword)
+const input = document.getElementById("username") as HTMLInputElement;
+// Alternative syntax (works everywhere except TSX files)
+const password = <HTMLInputElement>document.getElementById("password");
+
+// Non-null assertion (!)
+function getLength(text: string | null) {
+  return text!.length; // Assert that text is not null
+}
+
+// When to use type assertions
+interface ApiResponse {
+  data: unknown;
+}
+
+function processResponse(response: ApiResponse) {
+  const userData = response.data as { name: string; email: string };
+  console.log(userData.name); // Safe to access now
+}
+  </code></pre>
+
+  <h2>5. any, unknown, never Types</h2>
+  <pre><code>
+// any - opt out of type checking (avoid when possible)
+let anyValue: any = 5;
+anyValue = "string";
+anyValue = true;
+anyValue.nonExistentMethod(); // No error
+
+// unknown - safer alternative to any
+let unknownValue: unknown = 5;
+unknownValue = "string";
+unknownValue = true;
+// unknownValue.toString(); // Error: Object is of type 'unknown'
+
+// Using unknown safely with type checking
+if (typeof unknownValue === "string") {
+  console.log(unknownValue.toUpperCase()); // Safe
+}
+
+// never - represents values that never occur
+function throwError(message: string): never {
+  throw new Error(message);
+}
+
+function infiniteLoop(): never {
+  while (true) {}
+}
+
+// Using never for exhaustive checks
+type Shape = Circle | Square;
+
+interface Circle {
+  kind: "circle";
+  radius: number;
+}
+
+interface Square {
+  kind: "square";
+  sideLength: number;
+}
+
+function getArea(shape: Shape) {
+  switch (shape.kind) {
+    case "circle":
+      return Math.PI * shape.radius ** 2;
+    case "square":
+      return shape.sideLength ** 2;
+    default:
+      // This ensures all cases are covered
+      const _exhaustiveCheck: never = shape;
+      return _exhaustiveCheck;
+  }
+}
+  </code></pre>
+
+  <a href="/" class="back-link">← Back to Index</a>
+</body>
+</html>

@@ -1,0 +1,21 @@
+{
+  "name": "typescript-app",
+  "version": "1.0.0",
+  "description": "A TypeScript application",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "ts-node src/index.ts",
+    "docker:build": "docker build -t typescript-app .",
+    "docker:run": "docker run typescript-app",
+    "docker:compose:up": "docker compose up",
+    "docker:compose:down": "docker compose down"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "typescript": "^5.0.0",
+    "ts-node": "^10.9.1",
+    "@types/node": "^18.15.0"
+  }
+}

@@ -7,14 +7,19 @@ RUN corepack enable && corepack prepare pnpm@latest --activate
 # Set working directory
 WORKDIR /app
 
-# Copy package.json
+# Copy package.json and pnpm-lock.yaml (if exists)
 COPY package.json ./
+COPY pnpm-lock.yaml* ./
 
 # Install dependencies
 RUN pnpm install
 
-# Copy project files
-COPY . .
+# Copy TypeScript configuration
+COPY tsconfig.json ./
+
+# Copy source code
+COPY src/ ./src/
+COPY public/ ./public/
 
 # Build the application
 RUN pnpm build
